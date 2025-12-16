@@ -8,8 +8,11 @@
 // Base URL for the backend API
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
+// Extract base URL without /api/v1 for health check
+const BASE_SERVER_URL = API_BASE_URL.replace('/api/v1', '');
+
 // Health check endpoint
-export const HEALTH_CHECK_URL = 'http://localhost:8000/healthz';
+export const HEALTH_CHECK_URL = `${BASE_SERVER_URL}/healthz`;
 
 /**
  * API endpoints organized by feature
@@ -48,7 +51,7 @@ export const API_ENDPOINTS = {
 export function getApiUrl(endpoint: string): string {
   // Health check is at root level, not under /api/v1
   if (endpoint === '/healthz') {
-    return `http://localhost:8000${endpoint}`;
+    return `${BASE_SERVER_URL}${endpoint}`;
   }
   return `${API_BASE_URL}${endpoint}`;
 }

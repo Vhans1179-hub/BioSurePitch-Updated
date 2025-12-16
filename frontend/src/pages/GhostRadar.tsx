@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api';
+import { getApiUrl, API_ENDPOINTS } from '@/config/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -68,8 +68,8 @@ const GhostRadar = () => {
         
         // Fetch HCOs and stats in parallel
         const [hcosResponse, statsResponse] = await Promise.all([
-          fetch(`${API_BASE_URL}${API_ENDPOINTS.hcos.list}?${params.toString()}`),
-          fetch(`${API_BASE_URL}${API_ENDPOINTS.hcos.stats}`)
+          fetch(`${getApiUrl(API_ENDPOINTS.hcos.list)}?${params.toString()}`),
+          fetch(getApiUrl(API_ENDPOINTS.hcos.stats))
         ]);
         
         if (!hcosResponse.ok || !statsResponse.ok) {
