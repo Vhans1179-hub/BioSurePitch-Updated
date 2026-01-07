@@ -13,6 +13,12 @@ from backend.models.hco import (
     HCOInDB,
     HCOResponse,
 )
+from backend.models.surgeon_paper import (
+    SurgeonPaperBase,
+    SurgeonPaperCreate,
+    SurgeonPaperInDB,
+    SurgeonPaperResponse,
+)
 
 __all__ = [
     "PatientBase",
@@ -23,4 +29,8 @@ __all__ = [
     "HCOCreate",
     "HCOInDB",
     "HCOResponse",
+    "SurgeonPaperBase",
+    "SurgeonPaperCreate",
+    "SurgeonPaperInDB",
+    "SurgeonPaperResponse",
 ]

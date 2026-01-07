@@ -8,6 +8,7 @@ import CohortOverview from "./pages/CohortOverview";
 import ContractSimulator from "./pages/ContractSimulator";
 import GhostRadar from "./pages/GhostRadar";
 import Methodology from "./pages/Methodology";
+import LexingtonLanding from "./pages/LexingtonLanding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,16 +19,35 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <DashboardLayout>
-          <Routes>
-            <Route path="/" element={<CohortOverview />} />
-            <Route path="/simulator" element={<ContractSimulator />} />
-            <Route path="/ghost-radar" element={<GhostRadar />} />
-            <Route path="/methodology" element={<Methodology />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </DashboardLayout>
+        <Routes>
+          {/* Lexington Landing - No Dashboard Layout */}
+          <Route path="/lexington" element={<LexingtonLanding />} />
+          
+          {/* Dashboard Routes - With Dashboard Layout */}
+          <Route path="/" element={
+            <DashboardLayout>
+              <CohortOverview />
+            </DashboardLayout>
+          } />
+          <Route path="/simulator" element={
+            <DashboardLayout>
+              <ContractSimulator />
+            </DashboardLayout>
+          } />
+          <Route path="/ghost-radar" element={
+            <DashboardLayout>
+              <GhostRadar />
+            </DashboardLayout>
+          } />
+          <Route path="/methodology" element={
+            <DashboardLayout>
+              <Methodology />
+            </DashboardLayout>
+          } />
+          
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

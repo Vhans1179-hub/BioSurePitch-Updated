@@ -17,13 +17,18 @@ class HCOBase(BaseModel):
     treated_patients: int = Field(..., ge=0, description="Number of treated patients")
     ghost_patients: int = Field(..., ge=0, description="Number of ghost (eligible but untreated) patients")
     
-    @field_validator("state")
+    # Address fields for HCO address lookup feature
+    address: Optional[str] = Field(None, description="Street address")
+    city: Optional[str] = Field(None, description="City name")
+    zip_code: Optional[str] = Field(None, description="ZIP code")
+    
+    @field_validator("state", mode="before")
     @classmethod
     def validate_state(cls, v: str) -> str:
         """Validate state is uppercase 2-character code."""
         return v.upper()
     
-    @field_validator("region")
+    @field_validator("region", mode="before")
     @classmethod
     def validate_region(cls, v: str) -> str:
         """Validate region is one of the allowed values."""
@@ -32,7 +37,7 @@ class HCOBase(BaseModel):
             raise ValueError(f"region must be one of {allowed_regions}")
         return v
     
-    @field_validator("treated_patients", "ghost_patients")
+    @field_validator("treated_patients", "ghost_patients", mode="before")
     @classmethod
     def validate_non_negative(cls, v: int) -> int:
         """Validate patient counts are non-negative."""
@@ -65,6 +70,7 @@ class HCOInDB(HCOBase):
     id: Optional[str] = Field(None, alias="_id", description="MongoDB document ID")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last update timestamp")
+    address_last_updated: Optional[datetime] = Field(None, description="Timestamp of when address was last updated")
     
     model_config = {
         "populate_by_name": True,
