@@ -21,13 +21,13 @@ const LexingtonLanding = () => {
                 <div className="flex items-center gap-0">
                   <span className="text-lg font-bold text-white">L</span>
                   <div className="flex flex-col gap-[1.5px] mx-[1.5px]">
-                    <div className="w-[11px] h-[2.5px] bg-teal-500 rounded-sm"></div>
-                    <div className="w-[11px] h-[2.5px] bg-teal-500 rounded-sm"></div>
-                    <div className="w-[11px] h-[2.5px] bg-teal-500 rounded-sm"></div>
+                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
+                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
+                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
                   </div>
                   <span className="text-lg font-bold text-white">XINGTON</span>
                 </div>
-                <div className="text-[9px] tracking-[0.2em] text-gray-300 font-light text-left">MEDICAL</div>
+                <div className="text-[9px] tracking-[0.2em] text-gray-300 font-light text-right">MEDICAL</div>
               </div>
             </div>
             
