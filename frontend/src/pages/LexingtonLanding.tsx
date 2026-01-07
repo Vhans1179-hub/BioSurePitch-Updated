@@ -27,7 +27,7 @@ const LexingtonLanding = () => {
                   </div>
                   <span className="text-lg font-bold text-white">XINGTON</span>
                 </div>
-                <div className="text-[9px] tracking-[0.2em] text-gray-300 font-light">MEDICAL</div>
+                <div className="text-[9px] tracking-[0.2em] text-gray-300 font-light text-left">MEDICAL</div>
               </div>
             </div>
             
