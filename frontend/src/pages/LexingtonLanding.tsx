@@ -21,9 +21,9 @@ const LexingtonLanding = () => {
                 <div className="flex items-center gap-0">
                   <span className="text-lg font-bold text-white">L</span>
                   <div className="flex flex-col gap-[1.5px] mx-[1.5px]">
-                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
-                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
-                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
+                    <div className="w-[11px] h-[2.5px] bg-teal-500 rounded-sm"></div>
+                    <div className="w-[11px] h-[2.5px] bg-teal-500 rounded-sm"></div>
+                    <div className="w-[11px] h-[2.5px] bg-teal-500 rounded-sm"></div>
                   </div>
                   <span className="text-lg font-bold text-white">XINGTON</span>
                 </div>
@@ -36,8 +36,8 @@ const LexingtonLanding = () => {
               <button
                 onClick={() => setActiveTab('about')}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-orange-400",
-                  activeTab === 'about' ? 'text-orange-400' : 'text-white'
+                  "text-sm font-medium transition-colors hover:text-teal-400",
+                  activeTab === 'about' ? 'text-teal-400' : 'text-white'
                 )}
               >
                 About
@@ -45,8 +45,8 @@ const LexingtonLanding = () => {
               <button
                 onClick={() => setActiveTab('sales')}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-orange-400",
-                  activeTab === 'sales' ? 'text-orange-400' : 'text-white'
+                  "text-sm font-medium transition-colors hover:text-teal-400",
+                  activeTab === 'sales' ? 'text-teal-400' : 'text-white'
                 )}
               >
                 Sales
@@ -54,8 +54,8 @@ const LexingtonLanding = () => {
               <button
                 onClick={() => setActiveTab('compliance')}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-orange-400",
-                  activeTab === 'compliance' ? 'text-orange-400' : 'text-white'
+                  "text-sm font-medium transition-colors hover:text-teal-400",
+                  activeTab === 'compliance' ? 'text-teal-400' : 'text-white'
                 )}
               >
                 Compliance
@@ -64,7 +64,7 @@ const LexingtonLanding = () => {
 
             {/* MedAI Logo - Right */}
             <div className="flex items-center gap-1.5">
-              <div className="w-7 h-7 bg-orange-500 rounded flex items-center justify-center flex-shrink-0">
+              <div className="w-7 h-7 bg-teal-500 rounded flex items-center justify-center flex-shrink-0">
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth="2">
                   <circle cx="12" cy="12" r="3" />
                   <path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.5-7.5l-2.8 2.8m-7.4 7.4l-2.8 2.8m14.2 0l-2.8-2.8m-7.4-7.4l-2.8-2.8" />
@@ -72,7 +72,7 @@ const LexingtonLanding = () => {
               </div>
               <div className="leading-none">
                 <div className="text-sm font-bold text-white">
-                  MED<span className="text-orange-500">AI</span>
+                  MED<span className="text-teal-500">AI</span>
                 </div>
                 <div className="text-[8px] tracking-[0.15em] text-gray-300 font-light">AGENT</div>
               </div>
@@ -82,7 +82,7 @@ const LexingtonLanding = () => {
       </nav>
 
       {/* Purple Hero Banner - Compact */}
-      <section className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 py-8 text-center text-white">
+      <section className="bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 py-8 text-center text-white">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">
             MedAI Agent: Intelligent Execution for Lexington Medical
@@ -94,7 +94,7 @@ const LexingtonLanding = () => {
       </section>
 
       {/* Main Content - Tabs */}
-      <section className="py-16 bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800">
+      <section className="py-16 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800">
         <div className="container mx-auto px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 
@@ -102,7 +102,7 @@ const LexingtonLanding = () => {
             <TabsContent value="about" className="space-y-6">
               <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-3xl text-purple-700">About MedAI Agent</CardTitle>
+                  <CardTitle className="text-3xl text-slate-700">About MedAI Agent</CardTitle>
                   <CardDescription className="text-lg">
                     Your intelligent healthcare sales and compliance assistant
                   </CardDescription>
@@ -124,7 +124,7 @@ const LexingtonLanding = () => {
               </Card>
 
               <div className="grid md:grid-cols-3 gap-6">
-                <Card className="bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-xl">
+                <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white shadow-xl">
                   <CardHeader>
                     <div className="text-4xl mb-2">💬</div>
                     <CardTitle>Conversational AI</CardTitle>
@@ -136,7 +136,7 @@ const LexingtonLanding = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-xl">
+                <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white shadow-xl">
                   <CardHeader>
                     <div className="text-4xl mb-2">📊</div>
                     <CardTitle>Real-Time Data</CardTitle>
@@ -148,7 +148,7 @@ const LexingtonLanding = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-xl">
+                <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white shadow-xl">
                   <CardHeader>
                     <div className="text-4xl mb-2">🛡️</div>
                     <CardTitle>Compliance Built-In</CardTitle>
@@ -166,7 +166,7 @@ const LexingtonLanding = () => {
             <TabsContent value="sales" className="space-y-6">
               <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-3xl text-purple-700">Sales Solutions</CardTitle>
+                  <CardTitle className="text-3xl text-slate-700">Sales Solutions</CardTitle>
                   <CardDescription className="text-lg">
                     Empowering your sales team with data-driven insights
                   </CardDescription>
@@ -182,7 +182,7 @@ const LexingtonLanding = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">📊 Market Intelligence</CardTitle>
+                    <CardTitle className="text-slate-700">📊 Market Intelligence</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -195,7 +195,7 @@ const LexingtonLanding = () => {
 
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">🎯 Lead Generation</CardTitle>
+                    <CardTitle className="text-slate-700">🎯 Lead Generation</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -208,7 +208,7 @@ const LexingtonLanding = () => {
 
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">💼 Sales Enablement</CardTitle>
+                    <CardTitle className="text-slate-700">💼 Sales Enablement</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -222,7 +222,7 @@ const LexingtonLanding = () => {
 
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">📈 Analytics & Reporting</CardTitle>
+                    <CardTitle className="text-slate-700">📈 Analytics & Reporting</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -240,7 +240,7 @@ const LexingtonLanding = () => {
             <TabsContent value="compliance" className="space-y-6">
               <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-3xl text-purple-700">Compliance & Security</CardTitle>
+                  <CardTitle className="text-3xl text-slate-700">Compliance & Security</CardTitle>
                   <CardDescription className="text-lg">
                     Ensuring the highest standards of data protection and regulatory compliance
                   </CardDescription>
@@ -256,7 +256,7 @@ const LexingtonLanding = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">🔒 HIPAA Compliance</CardTitle>
+                    <CardTitle className="text-slate-700">🔒 HIPAA Compliance</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -271,7 +271,7 @@ const LexingtonLanding = () => {
 
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">📋 Regulatory Standards</CardTitle>
+                    <CardTitle className="text-slate-700">📋 Regulatory Standards</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -286,7 +286,7 @@ const LexingtonLanding = () => {
 
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">🛡️ Data Protection</CardTitle>
+                    <CardTitle className="text-slate-700">🛡️ Data Protection</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -301,7 +301,7 @@ const LexingtonLanding = () => {
 
                 <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                   <CardHeader>
-                    <CardTitle className="text-purple-700">✅ Certifications</CardTitle>
+                    <CardTitle className="text-slate-700">✅ Certifications</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2 text-gray-700">
@@ -315,7 +315,7 @@ const LexingtonLanding = () => {
                 </Card>
               </div>
 
-              <Card className="bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-xl">
+              <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white shadow-xl">
                 <CardHeader>
                   <CardTitle className="text-2xl">Our Commitment to Compliance</CardTitle>
                 </CardHeader>
@@ -338,12 +338,12 @@ const LexingtonLanding = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4 text-purple-400">Lexington Medical</h3>
+              <h3 className="text-xl font-bold mb-4 text-teal-400">Lexington Medical</h3>
               <p className="text-gray-400">Excellence in Healthcare Solutions</p>
               <p className="text-gray-400">Powered by MedAI Technology</p>
             </div>
             <div>
-              <h3 className="text-xl font-bold mb-4 text-purple-400">Quick Links</h3>
+              <h3 className="text-xl font-bold mb-4 text-teal-400">Quick Links</h3>
               <ul className="space-y-2">
                 <li><a href="#about" className="text-gray-400 hover:text-white transition">About</a></li>
                 <li><a href="#sales" className="text-gray-400 hover:text-white transition">Sales</a></li>
@@ -351,7 +351,7 @@ const LexingtonLanding = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-xl font-bold mb-4 text-purple-400">Contact Info</h3>
+              <h3 className="text-xl font-bold mb-4 text-teal-400">Contact Info</h3>
               <p className="text-gray-400">📍 123 Medical Center Drive</p>
               <p className="text-gray-400">📞 (555) 123-4567</p>
               <p className="text-gray-400">✉️ info@medaiagent.org</p>
