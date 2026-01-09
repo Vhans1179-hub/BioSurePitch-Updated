@@ -7,7 +7,7 @@ that can be processed through the chat interface.
 import re
 import logging
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union
 from datetime import datetime, timedelta
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -47,7 +47,7 @@ class QueryHandler(ABC):
         self.db = db
     
     @abstractmethod
-    async def handle(self, params: Dict[str, Any]) -> str:
+    async def handle(self, params: Dict[str, Any]) -> Union[str, List[str]]:
         """
         Handle the query and return a formatted response.
         
@@ -55,7 +55,7 @@ class QueryHandler(ABC):
             params: Dictionary of extracted parameters from the query
             
         Returns:
-            Formatted response string
+            Formatted response string or list of strings for multiple messages
         """
         raise NotImplementedError
 
@@ -718,7 +718,7 @@ class HCOAddressHandler(QueryHandler):
         return "\n".join(lines)
 
 class SurgeonPaperSearchHandler(QueryHandler):
-    """Handler for surgeon paper search queries by author name."""
+    """Handler for surgeon paper search queries by author name with internal/external workflow."""
     
     # Regex pattern to match queries like:
     # - "Find papers by Kahraman E"
@@ -742,8 +742,30 @@ class SurgeonPaperSearchHandler(QueryHandler):
             message: User message to check
             
         Returns:
-            Dictionary with 'author_name' if match found, None otherwise
+            Dictionary with 'author_name' and 'action' if match found, None otherwise
         """
+        # Check for special actions first
+        message_lower = message.lower()
+        
+        # Check for "fetch external data" action - more flexible matching
+        if any(phrase in message_lower for phrase in ["fetch external", "get external", "load external", "fetch data", "external data"]):
+            # Extract author name from context if available
+            match = re.search(r"(?:for|from)\s+(.+?)(?:\?|$)", message, re.IGNORECASE)
+            if match:
+                author_name = match.group(1).strip().rstrip('?.,!')
+                return {"author_name": author_name, "action": "fetch_external"}
+            # If no "for" found, check if message is just "Fetch External Data" without author
+            # In this case, return None to let it fall through to general handler
+            return None
+        
+        # Check for "update internal" action
+        if "update internal" in message_lower:
+            match = re.search(r"(?:for|from)\s+(.+?)(?:\?|$)", message, re.IGNORECASE)
+            if match:
+                author_name = match.group(1).strip().rstrip('?.,!')
+                return {"author_name": author_name, "action": "update_internal"}
+        
+        # Standard search pattern
         match = cls.PATTERN.search(message)
         if match:
             # Extract author name from any of the capture groups
@@ -753,79 +775,259 @@ class SurgeonPaperSearchHandler(QueryHandler):
                 author_name = author_name.strip().rstrip('?.,!')
                 # Remove common words that might be captured
                 author_name = re.sub(r'\b(publish|published|write|wrote|author)\b', '', author_name, flags=re.IGNORECASE).strip()
-                return {"author_name": author_name}
+                return {"author_name": author_name, "action": "search"}
         return None
     
-    async def handle(self, params: Dict[str, Any]) -> str:
+    async def handle(self, params: Dict[str, Any]) -> Union[str, List[str]]:
         """
-        Handle the surgeon paper search query.
+        Handle the surgeon paper search query with internal/external workflow.
         
-        This method:
-        1. Extracts the author name from parameters
-        2. Searches the surgeon_papers collection
-        3. Returns formatted results with Title, Journal, and Affiliation
-        4. Handles cases where no results are found
+        Workflow:
+        1. Search internal_surgeon_papers collection first
+        2. If found, display results
+        3. If not found or incomplete, offer "Fetch External Data" option
+        4. When fetching external, compare with internal and show differences
+        5. Offer option to update internal with external data
         
         Args:
-            params: Dictionary containing 'author_name' parameter
+            params: Dictionary containing 'author_name' and optional 'action' parameter
             
         Returns:
-            Formatted markdown response with search results
+            Formatted markdown response with search results and action options.
+            Returns a list of strings for multiple messages (initial search returns 2 messages).
         """
         author_name = params.get("author_name", "").strip()
+        action = params.get("action", "search")
         
         if not author_name:
             return "Please specify an author name to search for surgeon papers."
         
-        logger.info(f"Searching surgeon papers for author: {author_name}")
+        logger.info(f"Surgeon paper search - Author: {author_name}, Action: {action}")
         
-        # Search for papers by author name
-        papers = await SurgeonPaperService.search_by_author(
+        if action == "search":
+            return await self._handle_initial_search(author_name)
+        elif action == "fetch_external":
+            return await self._handle_fetch_external(author_name)
+        elif action == "update_internal":
+            return await self._handle_update_internal(author_name)
+        else:
+            return "Invalid action specified."
+    
+    async def _handle_initial_search(self, author_name: str) -> Union[str, List[str]]:
+        """Handle initial search in internal collection. Returns list of 2 messages if found."""
+        # Search internal collection first
+        internal_papers = await SurgeonPaperService.search_internal_by_author(
             self.db,
             author_name,
             limit=20
         )
         
-        # Format and return response
-        return self._format_response(author_name, papers)
+        if internal_papers:
+            # Found in internal collection - return 2 separate messages
+            return self._format_internal_response(author_name, internal_papers)
+        else:
+            # Not found in internal, offer to fetch external
+            return self._format_not_found_response(author_name)
     
-    def _format_response(self, author_name: str, papers: List[Dict[str, Any]]) -> str:
-        """
-        Format surgeon paper search results into a natural language response.
+    async def _handle_fetch_external(self, author_name: str) -> str:
+        """Handle fetching external data and comparing with internal."""
+        # Search both collections
+        internal_papers, external_papers = await SurgeonPaperService.search_both_collections(
+            self.db,
+            author_name,
+            limit=20
+        )
         
-        Args:
-            author_name: The author name that was searched
-            papers: List of surgeon paper documents
-            
-        Returns:
-            Markdown-formatted response string
-        """
-        if not papers:
+        if not external_papers:
             return (
-                f"I couldn't find any surgeon papers for author **{author_name}** in our database. "
-                "Please check the spelling or try a different author name."
+                f"No external data found for author **{author_name}**. "
+                "The author may not be in the external database."
             )
         
-        # Build response
-        lines = [f"**Surgeon Papers by {author_name}** ({len(papers)} found):\n"]
+        # If no internal papers, show external and offer to add
+        if not internal_papers:
+            return self._format_external_only_response(author_name, external_papers)
+        
+        # Compare papers and show differences
+        return self._format_comparison_response(author_name, internal_papers, external_papers)
+    
+    async def _handle_update_internal(self, author_name: str) -> str:
+        """Handle updating internal collection with external data."""
+        # Search both collections
+        internal_papers, external_papers = await SurgeonPaperService.search_both_collections(
+            self.db,
+            author_name,
+            limit=20
+        )
+        
+        if not external_papers:
+            return f"No external data available to update for author **{author_name}**."
+        
+        # If no internal papers, add them
+        if not internal_papers:
+            success_count = 0
+            for paper in external_papers:
+                # Remove _id to create new document
+                paper_data = {k: v for k, v in paper.items() if k != "_id"}
+                if await SurgeonPaperService.add_to_internal_collection(self.db, paper_data):
+                    success_count += 1
+            
+            return (
+                f"✅ **Update Complete**\n\n"
+                f"Successfully added {success_count} paper(s) for **{author_name}** to the internal collection."
+            )
+        
+        # Update existing papers with external data
+        update_count = 0
+        for ext_paper in external_papers:
+            # Find matching internal paper by title
+            matching_internal = next(
+                (p for p in internal_papers if p.get("title") == ext_paper.get("title")),
+                None
+            )
+            
+            if matching_internal:
+                # Compare and update if different
+                comparison = SurgeonPaperService.compare_papers(matching_internal, ext_paper)
+                if comparison["has_differences"]:
+                    # Prepare update data with only the different fields
+                    update_data = {}
+                    for field, diff in comparison["differences"].items():
+                        if diff["external"]:
+                            update_data[field] = diff["external"]
+                    
+                    if update_data:
+                        paper_id = str(matching_internal["_id"])
+                        if await SurgeonPaperService.update_internal_paper(self.db, paper_id, update_data):
+                            update_count += 1
+        
+        return (
+            f"✅ **Update Complete**\n\n"
+            f"Successfully updated {update_count} paper(s) for **{author_name}** in the internal collection."
+        )
+    
+    def _format_internal_response(self, author_name: str, papers: List[Dict[str, Any]]) -> List[str]:
+        """Format response for papers found in internal collection. Returns 2 separate messages."""
+        # First message: Paper details
+        lines = [f"**Surgeon Papers by {author_name}** ({len(papers)} found in internal database):\n"]
         
         for i, paper in enumerate(papers, 1):
             title = paper.get("title", "Unknown Title")
             journal = paper.get("journal", "Unknown Journal")
             affiliation = paper.get("affiliation", "Unknown Affiliation")
             author = paper.get("author_name", author_name)
+            website = paper.get("website", "")
+            address = paper.get("address", "")
+            email = paper.get("email", "")
             
             lines.append(f"{i}. **{title}**")
             lines.append(f"   - **Author:** {author}")
             lines.append(f"   - **Journal:** {journal}")
             lines.append(f"   - **Affiliation:** {affiliation}")
             
-            # Add website link if available
-            if paper.get("website"):
-                website = paper['website']
-                lines.append(f"   - **Link:** [Affiliation Website]({website})")
+            # Always show all fields, even if empty
+            lines.append(f"   - **Website:** {website if website else '_(empty)_'}")
+            lines.append(f"   - **Address:** {address if address else '_(empty)_'}")
+            lines.append(f"   - **Email:** {email if email else '_(empty)_'}")
             
             lines.append("")  # Empty line between papers
+        
+        first_message = "\n".join(lines)
+        
+        # Second message: Clickable button
+        second_message = f"[📥 Fetch External Data](#fetch-external:{author_name})"
+        
+        return [first_message, second_message]
+    
+    def _format_not_found_response(self, author_name: str) -> str:
+        """Format response when author not found in internal collection."""
+        return (
+            f"No papers found for author **{author_name}** in the internal database.\n\n"
+            f"💡 **Would you like to search external data?**\n"
+            f"Type: `Fetch external data for {author_name}`"
+        )
+    
+    def _format_external_only_response(self, author_name: str, papers: List[Dict[str, Any]]) -> str:
+        """Format response for papers found only in external collection."""
+        lines = [f"**External Surgeon Papers by {author_name}** ({len(papers)} found):\n"]
+        
+        for i, paper in enumerate(papers, 1):
+            title = paper.get("title", "Unknown Title")
+            journal = paper.get("journal", "Unknown Journal")
+            affiliation = paper.get("affiliation", "Unknown Affiliation")
+            
+            lines.append(f"{i}. **{title}**")
+            lines.append(f"   - **Journal:** {journal}")
+            lines.append(f"   - **Affiliation:** {affiliation}")
+            
+            if paper.get("website"):
+                lines.append(f"   - **Website:** {paper['website']}")
+            if paper.get("address"):
+                lines.append(f"   - **Address:** {paper['address']}")
+            if paper.get("email"):
+                lines.append(f"   - **Email:** {paper['email']}")
+            
+            lines.append("")
+        
+        lines.append("\n💡 **Add to internal database?**")
+        lines.append(f"Type: `Update internal for {author_name}` to add these papers to your internal collection.")
+        
+        return "\n".join(lines)
+    
+    def _format_comparison_response(
+        self,
+        author_name: str,
+        internal_papers: List[Dict[str, Any]],
+        external_papers: List[Dict[str, Any]]
+    ) -> str:
+        """Format response comparing internal and external papers."""
+        lines = [f"**Comparison: Internal vs External Data for {author_name}**\n"]
+        
+        # Compare each paper
+        has_differences = False
+        for ext_paper in external_papers:
+            title = ext_paper.get("title", "Unknown Title")
+            
+            # Find matching internal paper
+            matching_internal = next(
+                (p for p in internal_papers if p.get("title") == title),
+                None
+            )
+            
+            if not matching_internal:
+                lines.append(f"📄 **{title}**")
+                lines.append(f"   ⚠️ **Status:** Missing from internal database")
+                lines.append("")
+                has_differences = True
+                continue
+            
+            # Compare fields
+            comparison = SurgeonPaperService.compare_papers(matching_internal, ext_paper)
+            
+            if comparison["has_differences"]:
+                has_differences = True
+                lines.append(f"📄 **{title}**")
+                lines.append(f"   ⚠️ **Status:** Differences found\n")
+                
+                for field, diff in comparison["differences"].items():
+                    if diff["status"] == "missing":
+                        lines.append(f"   - **{field.title()}:** Missing in internal")
+                        lines.append(f"     External value: {diff['external']}")
+                    elif diff["status"] == "different":
+                        lines.append(f"   - **{field.title()}:** Values differ")
+                        lines.append(f"     Internal: {diff['internal']}")
+                        lines.append(f"     External: {diff['external']}")
+                
+                lines.append("")
+            else:
+                lines.append(f"✅ **{title}** - Up to date")
+                lines.append("")
+        
+        if has_differences:
+            lines.append("\n💡 **Update internal database?**")
+            lines.append(f"Type: `Update internal for {author_name}` to sync with external data.")
+        else:
+            lines.append("\n✅ **All papers are up to date!**")
         
         return "\n".join(lines)
 

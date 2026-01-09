@@ -4,7 +4,7 @@ Chat Engine for BioSure Analytics.
 This module implements the main chat engine that handles intent detection,
 query routing, and response generation.
 """
-from typing import List, Type
+from typing import List, Type, Union
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from backend.services.chat_handlers import (
@@ -51,7 +51,7 @@ class ChatEngine:
         # General chat handler (fallback)
         self.general_handler = GeneralChatHandler(db)
     
-    async def process_message(self, message: str) -> str:
+    async def process_message(self, message: str) -> Union[str, List[str]]:
         """
         Process a user message and generate an appropriate response.
         
@@ -64,7 +64,7 @@ class ChatEngine:
             message: User's chat message
             
         Returns:
-            Generated response string
+            Generated response - either a single string or a list of strings for multiple messages
         """
         # Try to match against data query handlers
         for handler_class in self.data_handlers:

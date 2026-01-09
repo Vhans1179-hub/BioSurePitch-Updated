@@ -85,3 +85,36 @@ class ChatMessageResponse(BaseModel):
             }
         }
     }
+
+
+class ChatMultiMessageResponse(BaseModel):
+    """Model for chat API responses with multiple messages."""
+    
+    messages: list[str] = Field(
+        ...,
+        description="List of bot response messages to be displayed sequentially"
+    )
+    session_id: str = Field(
+        ...,
+        description="Session ID for conversation continuity (UUID)"
+    )
+    timestamp: datetime = Field(
+        ...,
+        description="Response timestamp in ISO8601 format"
+    )
+    
+    model_config = {
+        "json_encoders": {
+            datetime: lambda v: v.isoformat(),
+        },
+        "json_schema_extra": {
+            "example": {
+                "messages": [
+                    "Here are the results...",
+                    "Would you like to see more?"
+                ],
+                "session_id": "550e8400-e29b-41d4-a716-446655440000",
+                "timestamp": "2024-01-15T10:30:00.000Z"
+            }
+        }
+    }

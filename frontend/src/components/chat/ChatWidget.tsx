@@ -38,6 +38,27 @@ interface ChatApiResponse {
 }
 
 /**
+ * API response interface for multi-message chat responses
+ */
+interface ChatMultiMessageResponse {
+  messages: string[];
+  session_id: string;
+  timestamp: string;
+}
+
+/**
+ * Union type for all possible chat API responses
+ */
+type ChatResponse = ChatApiResponse | ChatMultiMessageResponse;
+
+/**
+ * Type guard to check if response is multi-message
+ */
+function isMultiMessageResponse(response: ChatResponse): response is ChatMultiMessageResponse {
+  return 'messages' in response && Array.isArray(response.messages);
+}
+
+/**
  * Suggested query configuration
  */
 interface SuggestedQuery {
@@ -165,26 +186,52 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      const data: ChatApiResponse = await response.json();
+      const data: ChatResponse = await response.json();
 
       // Store session_id for conversation continuity
       if (data.session_id && !sessionId) {
         setSessionId(data.session_id);
       }
 
-      // Detect if response is a data insight
-      const messageType = isDataInsight(data.response) ? 'data-insight' : 'general';
+      // Check if response contains multiple messages
+      if (isMultiMessageResponse(data)) {
+        // Handle multiple messages - add them sequentially
+        const botMessages: Message[] = data.messages.map((content, index) => {
+          // Check if content contains markdown links (buttons)
+          const hasMarkdownLink = content.includes('[') && content.includes('](#');
+          const messageType = (isDataInsight(content) || hasMarkdownLink) ? 'data-insight' : 'general';
+          console.log(`Multi-message ${index + 1}:`, {
+            content: content.substring(0, 100),
+            hasMarkdownLink,
+            messageType,
+            role: 'bot'
+          });
+          return {
+            id: (Date.now() + index + 1).toString(),
+            role: 'bot',
+            content: content,
+            timestamp: new Date(data.timestamp),
+            type: messageType,
+          };
+        });
 
-      // Add bot response
-      const botResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'bot',
-        content: data.response,
-        timestamp: new Date(data.timestamp),
-        type: messageType,
-      };
+        console.log('Adding bot messages:', botMessages.length);
+        setMessages((prev) => [...prev, ...botMessages]);
+      } else {
+        // Handle single message response
+        const messageType = isDataInsight(data.response) ? 'data-insight' : 'general';
 
-      setMessages((prev) => [...prev, botResponse]);
+        // Add bot response
+        const botResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'bot',
+          content: data.response,
+          timestamp: new Date(data.timestamp),
+          type: messageType,
+        };
+
+        setMessages((prev) => [...prev, botResponse]);
+      }
     } catch (err) {
       console.error('Error sending message:', err);
       setError('Failed to send message. Please try again.');
@@ -334,12 +381,12 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               <Markdown
                                 remarkPlugins={[remarkGfm]}
                             components={{
-                              // Intercept HCO address lookup links
+                              // Intercept special action links
                               a: ({ node, href, children, ...props }) => {
                                 console.log('Link component called:', { href, children });
+                                
                                 // Check if this is an HCO address lookup link
                                 if (href && href.startsWith('#lookup-address:')) {
-                                  // Extract HCO name from the href
                                   const hcoName = decodeURIComponent(href.replace('#lookup-address:', ''));
                                   console.log('Rendering HCO lookup link:', hcoName);
                                   
@@ -349,11 +396,32 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                                       onClick={(e) => {
                                         e.preventDefault();
                                         console.log('HCO link clicked:', hcoName);
-                                        // Auto-send the address lookup query
                                         handleSendMessage(`What is the address of ${hcoName}?`);
                                       }}
                                       className="text-primary hover:underline cursor-pointer font-medium !text-blue-600 dark:!text-blue-400"
                                       style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                                      {...props}
+                                    >
+                                      {children}
+                                    </a>
+                                  );
+                                }
+                                
+                                // Check if this is a fetch external data link
+                                if (href && href.startsWith('#fetch-external:')) {
+                                  const authorName = decodeURIComponent(href.replace('#fetch-external:', ''));
+                                  console.log('Rendering fetch external link:', authorName);
+                                  
+                                  return (
+                                    <a
+                                      href="#"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        console.log('Fetch external clicked:', authorName);
+                                        handleSendMessage(`Fetch external data for ${authorName}`);
+                                      }}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-md shadow-sm transition-all cursor-pointer no-underline"
+                                      style={{ textDecoration: 'none' }}
                                       {...props}
                                     >
                                       {children}
