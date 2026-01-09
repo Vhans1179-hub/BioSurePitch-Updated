@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Activity, Users, AlertTriangle, FileText } from 'lucide-react';
+import { Activity, Users, AlertTriangle, FileText, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatWidget } from '@/components/chat/ChatWidget';
 
@@ -8,14 +8,22 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+interface NavItem {
+  path: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  external?: boolean;
+}
+
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   
-  const navItems = [
+  const navItems: NavItem[] = [
     { path: '/', label: 'Cohort Overview', icon: Users },
     { path: '/simulator', label: 'Contract Simulator', icon: Activity },
     { path: '/ghost-radar', label: 'Ghost Patient Radar', icon: AlertTriangle },
-    { path: '/methodology', label: 'Methodology', icon: FileText }
+    { path: '/methodology', label: 'Methodology', icon: FileText },
+    { path: '/medai-agent', label: 'MedAI Agent', icon: Sparkles, external: true }
   ];
   
   return (
@@ -52,6 +60,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       ? "border-blue-600 text-blue-600"
                       : "border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
                   )}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.label}</span>

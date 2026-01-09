@@ -15,6 +15,8 @@ class SurgeonPaperBase(BaseModel):
     author_name: str = Field(..., description="Author name")
     affiliation: str = Field(..., description="Author affiliation")
     website: Optional[str] = Field(None, description="Paper or author website URL")
+    address: Optional[str] = Field(None, description="Hospital or institution address")
+    email: Optional[str] = Field(None, description="Contact email")
     
     model_config = {
         "json_schema_extra": {

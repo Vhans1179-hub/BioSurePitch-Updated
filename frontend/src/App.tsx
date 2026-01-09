@@ -9,6 +9,7 @@ import ContractSimulator from "./pages/ContractSimulator";
 import GhostRadar from "./pages/GhostRadar";
 import Methodology from "./pages/Methodology";
 import LexingtonLanding from "./pages/LexingtonLanding";
+import MedAIAgent from "./pages/MedAIAgent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,8 +21,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Lexington Landing - No Dashboard Layout */}
+          {/* Standalone Pages - No Dashboard Layout */}
           <Route path="/lexington" element={<LexingtonLanding />} />
+          <Route path="/medai-agent" element={<MedAIAgent />} />
           
           {/* Dashboard Routes - With Dashboard Layout */}
           <Route path="/" element={
