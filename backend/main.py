@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.config import settings
 from backend.database import database
-from backend.routers import patients, hcos, contracts, chat
+from backend.routers import patients, hcos, contracts, chat, pdfs
 
 # Configure logging
 logging.basicConfig(
@@ -19,6 +19,9 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+# PDF endpoints are now available at /api/v1/pdfs
+# Restarting to load new credentials
 
 
 @asynccontextmanager
@@ -61,6 +64,7 @@ app.include_router(patients.router)
 app.include_router(hcos.router)
 app.include_router(contracts.router)
 app.include_router(chat.router)
+app.include_router(pdfs.router)
 
 
 @app.get("/healthz")

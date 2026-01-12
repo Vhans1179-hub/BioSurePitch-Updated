@@ -43,6 +43,16 @@ export const API_ENDPOINTS = {
   chat: {
     message: '/chat/message',
   },
+  
+  // PDFs
+  pdfs: {
+    upload: '/pdfs/upload',
+    list: '/pdfs/list',
+    geminiFiles: '/pdfs/gemini-files',
+    sync: '/pdfs/sync',
+    delete: (fileName: string) => `/pdfs/${fileName}`,
+    query: '/pdfs/query',
+  },
 } as const;
 
 /**

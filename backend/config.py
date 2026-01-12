@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     
+    # Gemini API Configuration
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-1.5-pro-latest"
+    
+    # PDF Storage Configuration
+    pdf_storage_path: str = "backend/data/documents"
+    
     model_config = SettingsConfigDict(
         env_file=str(Path(__file__).parent / ".env"),
         env_file_encoding="utf-8",

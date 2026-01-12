@@ -1034,6 +1034,115 @@ class SurgeonPaperSearchHandler(QueryHandler):
 
 
 
+class PDFKnowledgeHandler(QueryHandler):
+    """Handler for PDF document queries using Gemini RAG service."""
+    
+    # Regex pattern to match queries like:
+    # - "What does the research say about..."
+    # - "According to the guidelines..."
+    # - "Search the documents for..."
+    # - "What do the papers say about..."
+    # - "Find information about... in the documents"
+    PATTERN = re.compile(
+        r"(?:what|how|why|when|where|who).*(?:research|paper|document|guideline|policy|study|literature|publication).*(?:say|show|indicate|suggest|mention|state)|"
+        r"(?:according to|based on|in the|from the).*(?:research|paper|document|guideline|policy|study|literature|publication)|"
+        r"(?:search|find|look up|check).*(?:document|paper|guideline|policy|literature|publication)|"
+        r"(?:what do|what does).*(?:paper|document|guideline|policy|study).*(?:say|show|indicate|suggest)",
+        re.IGNORECASE
+    )
+    
+    @classmethod
+    def matches(cls, message: str) -> Optional[Dict[str, Any]]:
+        """
+        Check if the message matches this handler's pattern.
+        
+        Args:
+            message: User message to check
+            
+        Returns:
+            Dictionary with 'query' if match found, None otherwise
+        """
+        match = cls.PATTERN.search(message)
+        if match:
+            return {"query": message}
+        return None
+    
+    async def handle(self, params: Dict[str, Any]) -> str:
+        """
+        Handle the PDF knowledge query using Gemini RAG service.
+        
+        Args:
+            params: Dictionary containing 'query' parameter
+            
+        Returns:
+            Formatted markdown response with answer and sources
+        """
+        query = params.get("query", "").strip()
+        
+        if not query:
+            return "Please provide a question to search the documents."
+        
+        logger.info(f"PDF knowledge query: {query[:100]}...")
+        
+        try:
+            # Import here to avoid circular dependency
+            from backend.services.gemini_rag_service import get_rag_service
+            
+            # Get RAG service
+            rag_service = await get_rag_service()
+            
+            # Query documents
+            result = await rag_service.query_documents(query)
+            
+            if not result["success"]:
+                error_msg = result.get("error", "Unknown error")
+                logger.error(f"RAG query failed: {error_msg}")
+                return (
+                    f"I encountered an error while searching the documents: {error_msg}\n\n"
+                    "Please try rephrasing your question or contact support if the issue persists."
+                )
+            
+            # Format response
+            return self._format_response(result)
+            
+        except Exception as e:
+            logger.error(f"Error in PDF knowledge handler: {str(e)}", exc_info=True)
+            return (
+                "I encountered an unexpected error while searching the documents. "
+                "Please try again or contact support if the issue persists."
+            )
+    
+    def _format_response(self, result: Dict[str, Any]) -> str:
+        """
+        Format RAG query result into a natural language response.
+        
+        Args:
+            result: RAG query result dictionary
+            
+        Returns:
+            Markdown-formatted response string
+        """
+        response_text = result.get("response", "")
+        sources = result.get("sources", [])
+        
+        if not response_text:
+            return (
+                "I couldn't find relevant information in the available documents. "
+                "Please try rephrasing your question or ask about a different topic."
+            )
+        
+        lines = [response_text]
+        
+        # Add sources section if available
+        if sources:
+            lines.append("\n\n**Sources:**")
+            for i, source in enumerate(sources, 1):
+                source_name = source.get("name", "Unknown")
+                lines.append(f"{i}. {source_name}")
+        
+        return "\n".join(lines)
+
+
 
 class GeneralChatHandler(QueryHandler):
     """Handler for general chat queries (non-data queries)."""

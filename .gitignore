@@ -49,6 +49,10 @@ test_*.py
 # Data files
 *.csv
 
+# PDF documents (keep directory structure with .gitkeep)
+backend/data/documents/**/*.pdf
+!backend/data/documents/**/.gitkeep
+
 # Development scripts
 add_*.py
 find_*.py

@@ -16,6 +16,7 @@ from backend.services.chat_handlers import (
     PatientOutcomesHandler,
     HCOAddressHandler,
     SurgeonPaperSearchHandler,
+    PDFKnowledgeHandler,
     GeneralChatHandler,
 )
 
@@ -41,6 +42,7 @@ class ChatEngine:
             TopHCOsHandler,
             HCOAddressHandler,  # HCO address lookup
             SurgeonPaperSearchHandler,  # Surgeon paper search by author
+            PDFKnowledgeHandler,  # PDF document queries using Gemini RAG
             ContractSimulationHandler,  # Check simulation before templates (more specific)
             ContractTemplatesHandler,
             PatientOutcomesHandler,  # Check outcomes before general stats (more specific)

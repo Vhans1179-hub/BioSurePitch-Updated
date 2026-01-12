@@ -3,7 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { MessageCircle, X, Send, ChevronDown, ChevronUp, BookOpen, Info } from 'lucide-react';
+import { PDFManager } from '@/components/chat/PDFManager';
 
 interface ChatMessage {
   text: string;
@@ -12,9 +15,10 @@ interface ChatMessage {
 
 const MedAIAgent = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isDocLibraryOpen, setIsDocLibraryOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      text: '👋 Hello! I\'m your MedAI Assistant. I can help you with:\n\n• Healthcare organization information\n• Patient data insights\n• Contract details\n• HCO address lookups\n\nTry asking: "What are the top 5 HCOs?" or "What is the address for Tyrone Hospital?"',
+      text: '👋 Hello! I\'m your MedAI Assistant. I can help you with:\n\n• Healthcare organization information\n• Patient data insights\n• Contract details\n• HCO address lookups\n• Document search (research papers, policies, guidelines)\n\nTry asking: "What are the top 5 HCOs?" or "What does the research say about CAR-T therapy?"',
       sender: 'bot'
     }
   ]);
@@ -118,6 +122,46 @@ const MedAIAgent = () => {
       <section id="features" className="bg-white py-20">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Our Services</h2>
+          
+          {/* PDF RAG Info Banner */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <Alert className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+              <BookOpen className="h-5 w-5 text-purple-600" />
+              <AlertDescription className="text-gray-700">
+                <strong className="text-purple-700">AI-Powered Document Search:</strong> Upload research papers, clinical guidelines, and policies to enable intelligent document search.
+                Ask questions like "What does the research say about CAR-T therapy?" and get answers with source citations.
+              </AlertDescription>
+            </Alert>
+          </div>
+
+          {/* Document Library Section */}
+          <div className="max-w-6xl mx-auto mb-12">
+            <Collapsible open={isDocLibraryOpen} onOpenChange={setIsDocLibraryOpen}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-between p-6 h-auto hover:bg-purple-50 border-2 border-purple-200"
+                >
+                  <div className="flex items-center gap-3">
+                    <BookOpen className="h-6 w-6 text-purple-600" />
+                    <div className="text-left">
+                      <h3 className="text-xl font-bold text-gray-900">Document Library</h3>
+                      <p className="text-sm text-gray-600">Manage your research papers, policies, and clinical documents</p>
+                    </div>
+                  </div>
+                  {isDocLibraryOpen ? (
+                    <ChevronUp className="h-5 w-5 text-purple-600" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-purple-600" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4">
+                <PDFManager />
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="p-8 bg-gradient-to-br from-purple-600 to-purple-800 text-white hover:scale-105 transition-transform">
               <div className="text-5xl mb-4">🏥</div>
@@ -127,7 +171,7 @@ const MedAIAgent = () => {
             <Card className="p-8 bg-gradient-to-br from-purple-600 to-purple-800 text-white hover:scale-105 transition-transform">
               <div className="text-5xl mb-4">🤖</div>
               <h3 className="text-2xl font-bold mb-4">AI-Powered Insights</h3>
-              <p className="opacity-95">Our MedAI Assistant provides instant access to healthcare data, patient insights, and organizational information.</p>
+              <p className="opacity-95">Our MedAI Assistant provides instant access to healthcare data, patient insights, organizational information, and document search.</p>
             </Card>
             <Card className="p-8 bg-gradient-to-br from-purple-600 to-purple-800 text-white hover:scale-105 transition-transform">
               <div className="text-5xl mb-4">💊</div>
