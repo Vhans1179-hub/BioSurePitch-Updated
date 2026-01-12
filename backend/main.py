@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import logging
+import sys
+from pathlib import Path
+
+# Add parent directory to path for imports to work from both root and backend directory
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.config import settings
 from backend.database import database
@@ -92,9 +97,15 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
+    import os
+    
+    # Use environment PORT if available (for Render), otherwise use settings
+    port = int(os.getenv("PORT", settings.port))
+    host = os.getenv("HOST", settings.host)
+    
     uvicorn.run(
-        "backend.main:app",
-        host=settings.host,
-        port=settings.port,
+        "main:app",
+        host=host,
+        port=port,
         reload=True
     )
