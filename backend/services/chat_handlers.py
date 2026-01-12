@@ -729,6 +729,7 @@ class SurgeonPaperSearchHandler(QueryHandler):
     PATTERN = re.compile(
         r"(?:find|search|show|get|list|what).*(?:papers?|publications?).*(?:by|for|from|author)\s+(.+?)(?:\?|$)|"
         r"(?:papers?|publications?).*(?:by|from)\s+(.+?)(?:\?|$)|"
+        r"(?:what|which).*(?:papers?|publications?).*(?:did|does)\s+(.+?)\s+(?:publish|write|author)|"
         r"(?:author|surgeon)\s+(.+?).*(?:papers?|publications?)",
         re.IGNORECASE
     )
@@ -769,7 +770,7 @@ class SurgeonPaperSearchHandler(QueryHandler):
         match = cls.PATTERN.search(message)
         if match:
             # Extract author name from any of the capture groups
-            author_name = match.group(1) or match.group(2) or match.group(3)
+            author_name = match.group(1) or match.group(2) or match.group(3) or match.group(4)
             if author_name:
                 # Clean up the author name
                 author_name = author_name.strip().rstrip('?.,!')
