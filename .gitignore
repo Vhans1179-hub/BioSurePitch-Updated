@@ -44,3 +44,16 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+test_*.py
+
+# Data files
+*.csv
+
+# Development scripts
+add_*.py
+find_*.py
+get_*.py
+search_*.py
+
+# Standalone HTML test files
+MedAIAgent.html
