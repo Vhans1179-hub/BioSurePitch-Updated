@@ -5,6 +5,7 @@ This module implements handlers for different types of data queries
 that can be processed through the chat interface.
 """
 import re
+import urllib.parse
 import logging
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional, Union
@@ -800,6 +801,13 @@ class SurgeonPaperSearchHandler(QueryHandler):
         author_name = params.get("author_name", "").strip()
         action = params.get("action", "search")
         
+        # Clean up author_name if it contains "Update internal for" (happens when parsing complex button commands)
+        if author_name.lower().startswith("update internal for"):
+            match = re.search(r"update internal for\s+(.+)", author_name, re.IGNORECASE)
+            if match:
+                author_name = match.group(1).strip()
+                action = "update_internal"
+
         if not author_name:
             return "Please specify an author name to search for surgeon papers."
         
@@ -936,7 +944,9 @@ class SurgeonPaperSearchHandler(QueryHandler):
         first_message = "\n".join(lines)
         
         # Second message: Clickable button
-        second_message = f"[📥 Fetch External Data](#fetch-external:{author_name})"
+        # URL encode the author name to ensure markdown link is parsed correctly
+        encoded_author = urllib.parse.quote(author_name)
+        second_message = f"[📥 Fetch External Data](#fetch-external:{encoded_author})"
         
         return [first_message, second_message]
     
@@ -1008,14 +1018,12 @@ class SurgeonPaperSearchHandler(QueryHandler):
             if comparison["has_differences"]:
                 has_differences = True
                 lines.append(f"📄 **{title}**")
-                lines.append(f"   ⚠️ **Status:** Differences found\n")
                 
                 for field, diff in comparison["differences"].items():
                     if diff["status"] == "missing":
-                        lines.append(f"   - **{field.title()}:** Missing in internal")
-                        lines.append(f"     External value: {diff['external']}")
+                        lines.append(f"   - ⚠️ **Missing {field.title()}:** {diff['external']}")
                     elif diff["status"] == "different":
-                        lines.append(f"   - **{field.title()}:** Values differ")
+                        lines.append(f"   - ⚠️ **{field.title()} Mismatch:**")
                         lines.append(f"     Internal: {diff['internal']}")
                         lines.append(f"     External: {diff['external']}")
                 
@@ -1024,13 +1032,15 @@ class SurgeonPaperSearchHandler(QueryHandler):
                 lines.append(f"✅ **{title}** - Up to date")
                 lines.append("")
         
-        if has_differences:
-            lines.append("\n💡 **Update internal database?**")
-            lines.append(f"Type: `Update internal for {author_name}` to sync with external data.")
-        else:
-            lines.append("\n✅ **All papers are up to date!**")
+        first_message = "\n".join(lines)
         
-        return "\n".join(lines)
+        if has_differences:
+            # Add update button as a second message
+            encoded_author = urllib.parse.quote(author_name)
+            second_message = f"[🔄 Update Internal Data](#fetch-external:Update%20internal%20for%20{encoded_author})"
+            return [first_message, second_message]
+        else:
+            return first_message + "\n\n✅ **All papers are up to date!**"
 
 
 

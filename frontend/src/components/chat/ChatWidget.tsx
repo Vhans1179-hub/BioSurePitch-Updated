@@ -119,6 +119,21 @@ function isPDFQuery(message: string): boolean {
 }
 
 /**
+ * Pre-process markdown content to fix common formatting issues
+ * specifically handles spaces in markdown links which breaks rendering
+ */
+function preprocessMessageContent(content: string): string {
+  // Fix markdown links that have spaces in the URL part
+  // Example: [Link](#target with space) -> [Link](#target%20with%20space)
+  return content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+    if (url.includes(' ')) {
+      return `[${text}](${url.replace(/ /g, '%20')})`;
+    }
+    return match;
+  });
+}
+
+/**
  * ChatWidget Component
  * A floating chat widget with AI assistant functionality and data insights support
  */
@@ -455,19 +470,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                                   console.log('Rendering fetch external link:', authorName);
                                   
                                   return (
-                                    <a
-                                      href="#"
+                                    <button
+                                      type="button"
                                       onClick={(e) => {
                                         e.preventDefault();
+                                        e.stopPropagation();
                                         console.log('Fetch external clicked:', authorName);
                                         handleSendMessage(`Fetch external data for ${authorName}`);
                                       }}
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-md shadow-sm transition-all cursor-pointer no-underline"
-                                      style={{ textDecoration: 'none' }}
-                                      {...props}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-md shadow-sm transition-all cursor-pointer no-underline mt-2 border-0"
                                     >
                                       {children}
-                                    </a>
+                                    </button>
                                   );
                                 }
                                 
@@ -514,7 +528,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                               ),
                             }}
                           >
-                            {message.content}
+                            {preprocessMessageContent(message.content)}
                               </Markdown>
                             </div>
                           );
