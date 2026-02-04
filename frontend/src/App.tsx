@@ -10,6 +10,7 @@ import GhostRadar from "./pages/GhostRadar";
 import Methodology from "./pages/Methodology";
 import LexingtonLanding from "./pages/LexingtonLanding";
 import MedAIAgent from "./pages/MedAIAgent";
+import IntelligenceHub from "./pages/IntelligenceHub";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           {/* Standalone Pages - No Dashboard Layout */}
           <Route path="/lexington" element={<LexingtonLanding />} />
           <Route path="/medai-agent" element={<MedAIAgent />} />
+          <Route path="/intelligence-hub" element={<IntelligenceHub />} />
           
           {/* Dashboard Routes - With Dashboard Layout */}
           <Route path="/" element={

@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.config import settings
 from backend.database import database
-from backend.routers import patients, hcos, contracts, chat, pdfs
+from backend.routers import patients, hcos, contracts, chat, pdfs, procurement
 
 # Configure logging
 logging.basicConfig(
@@ -65,6 +65,7 @@ app.include_router(hcos.router)
 app.include_router(contracts.router)
 app.include_router(chat.router)
 app.include_router(pdfs.router)
+app.include_router(procurement.router)
 
 
 @app.get("/healthz")
