@@ -21,7 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # PDF endpoints are now available at /api/v1/pdfs
-# Restarting to load new credentials
+# Restarting to load new credentials and model configuration (gemini-1.5-pro-latest)
 
 
 @asynccontextmanager
