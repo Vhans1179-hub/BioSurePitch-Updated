@@ -97,7 +97,7 @@ const LexingtonLanding = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    MedAI Agent is an AI-powered platform designed specifically for Lexington Medical's sales and
+                    MedAI Agent is an AI-powered platform designed specifically for sales and
                     compliance teams. We combine cutting-edge artificial intelligence with deep healthcare industry
                     knowledge to streamline your workflows, seamlessly integrated into your current technology stack.
                   </p>
