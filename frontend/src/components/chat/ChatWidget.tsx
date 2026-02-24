@@ -156,7 +156,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     const welcomeMessage: Message = {
       id: '1',
       role: 'bot',
-      content: `Hello! I'm your ${title}. ${description}\n\nTry asking me about HCOs, patients, contracts, or outcomes. Click one of the suggested queries below!`,
+      content: `Hello! I'm your ${title}. ${description}\n\nTry asking me about specific Authors, or Labeling Recommendations, or any other information from FDA Guidelines. Click one of the suggested queries below!`,
       timestamp: new Date(),
       type: 'general',
     };
