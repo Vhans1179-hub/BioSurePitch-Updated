@@ -15,20 +15,8 @@ const LexingtonLanding = () => {
       <nav className="bg-gray-900 text-white">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            {/* Lexington Medical Logo - Left */}
+            {/* Empty space on left */}
             <div className="flex items-center gap-2">
-              <div className="leading-none">
-                <div className="flex items-center gap-0">
-                  <span className="text-lg font-bold text-white">L</span>
-                  <div className="flex flex-col gap-[1.5px] mx-[1.5px]">
-                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
-                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
-                    <div className="w-[11px] h-[2.5px] bg-orange-500 rounded-sm"></div>
-                  </div>
-                  <span className="text-lg font-bold text-white">XINGTON</span>
-                </div>
-                <div className="text-[9px] tracking-[0.2em] text-gray-300 font-light text-right">MEDICAL</div>
-              </div>
             </div>
             
             {/* Navigation Tabs - Center */}
@@ -85,7 +73,7 @@ const LexingtonLanding = () => {
       <section className="bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 py-8 text-center text-white">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">
-            MedAI Agent: Intelligent Execution for Lexington Medical
+            MedAI Agent: Intelligent Sales Support
           </h1>
           <p className="text-base md:text-lg opacity-95 max-w-3xl mx-auto">
             Mobilize your Sales Team with autonomous, real-time HCP profiling and automated regulatory clearance to accelerate sales cycles.
