@@ -50,19 +50,16 @@ const LexingtonLanding = () => {
               </button>
             </div>
 
-            {/* MedAI Logo - Right */}
+            {/* Genie Logo - Right */}
             <div className="flex items-center gap-1.5">
               <div className="w-7 h-7 bg-teal-500 rounded flex items-center justify-center flex-shrink-0">
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth="2">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.5-7.5l-2.8 2.8m-7.4 7.4l-2.8 2.8m14.2 0l-2.8-2.8m-7.4-7.4l-2.8-2.8" />
-                </svg>
+                <TrendingUp className="w-4 h-4 text-white" />
               </div>
               <div className="leading-none">
                 <div className="text-sm font-bold text-white">
-                  MED<span className="text-teal-500">AI</span>
+                  GENIE
                 </div>
-                <div className="text-[8px] tracking-[0.15em] text-gray-300 font-light">AGENT</div>
+                <div className="text-[8px] tracking-[0.15em] text-gray-300 font-light">ANALYTICS</div>
               </div>
             </div>
           </div>
@@ -73,7 +70,7 @@ const LexingtonLanding = () => {
       <section className="bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 py-8 text-center text-white">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">
-            MedAI Agent: Intelligent Sales Support
+            Genie: Intelligent Sales Support
           </h1>
           <p className="text-base md:text-lg opacity-95 max-w-3xl mx-auto">
             Mobilize your Sales Team with autonomous, real-time HCP profiling and automated regulatory clearance to accelerate sales cycles.
@@ -90,14 +87,14 @@ const LexingtonLanding = () => {
             <TabsContent value="about" className="space-y-6">
               <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
                 <CardHeader>
-                  <CardTitle className="text-3xl text-slate-700">About MedAI Agent</CardTitle>
+                  <CardTitle className="text-3xl text-slate-700">About Genie - Analytics Agent</CardTitle>
                   <CardDescription className="text-lg">
                     Your intelligent healthcare sales and compliance assistant
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    MedAI Agent is an AI-powered platform designed specifically for sales and
+                    Genie is an AI-powered Analytics Agent designed specifically for sales and
                     compliance teams. We combine cutting-edge artificial intelligence with deep healthcare industry
                     knowledge to streamline your workflows, seamlessly integrated into your current technology stack.
                   </p>
@@ -106,7 +103,7 @@ const LexingtonLanding = () => {
                     contract information, and regulatory compliance guidance - all through a simple conversational interface.
                   </p>
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    Whether you're looking up HCO addresses, MedAI Agent is your trusted partner in Sales Enablement and Regulatory Compliance.
+                    Whether you're looking up HCO addresses, Genie is your trusted partner in Sales Enablement and Regulatory Compliance.
                   </p>
                 </CardContent>
               </Card>
@@ -235,7 +232,7 @@ const LexingtonLanding = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-700 text-lg leading-relaxed">
-                    At Lexington Medical, we prioritize the security and privacy of healthcare data. 
+                    We prioritize the security and privacy of healthcare data.
                     Our platform is built with compliance at its core.
                   </p>
                 </CardContent>
@@ -326,9 +323,9 @@ const LexingtonLanding = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4 text-teal-400">Lexington Medical</h3>
-              <p className="text-gray-400">Excellence in Healthcare Solutions</p>
-              <p className="text-gray-400">Powered by MedAI Technology</p>
+              <h3 className="text-xl font-bold mb-4 text-teal-400">Genie</h3>
+              <p className="text-gray-400">Your AI-Powered Sales & Compliance Agent</p>
+              <p className="text-gray-400">Powered by Genie - Analytics Agent</p>
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4 text-teal-400">Quick Links</h3>
@@ -342,11 +339,11 @@ const LexingtonLanding = () => {
               <h3 className="text-xl font-bold mb-4 text-teal-400">Contact Info</h3>
               <p className="text-gray-400">📍 123 Medical Center Drive</p>
               <p className="text-gray-400">📞 (555) 123-4567</p>
-              <p className="text-gray-400">✉️ info@medaiagent.org</p>
+              <p className="text-gray-400">✉️ info@genieagent.org</p>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 Lexington Medical | MedAIAgent.org. All rights reserved.</p>
+            <p>&copy; 2026 Genie Sales Agent | GenieAgent.org. All rights reserved.</p>
           </div>
         </div>
       </footer>

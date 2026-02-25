@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, X, Send, Bot, User, Sparkles, BarChart3, HelpCircle, FileText, Calculator, Users, BookOpen } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Sparkles, BarChart3, HelpCircle, FileText, Calculator, Users, BookOpen, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getApiUrl, API_ENDPOINTS, DEFAULT_FETCH_OPTIONS } from '@/config/api';
 import Markdown from 'react-markdown';
@@ -308,7 +308,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
-  const showSuggestedQueries = messages.length <= 1 && !isLoading;
+  // Read from environment variable, default to false if not set
+  const showSuggestedQueries = import.meta.env.VITE_SHOW_SUGGESTED_QUERIES === 'true' && messages.length <= 1 && !isLoading;
 
   return (
     <>
@@ -326,14 +327,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           <Button
             onClick={handleToggle}
             className="h-[70px] w-[100px] rounded-2xl shadow-lg bg-gradient-to-br from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 border-0"
-            aria-label="Chat with MedAI"
+            aria-label="Chat with Genie"
             aria-expanded={isOpen}
           >
             <div className="flex flex-col items-center justify-center">
               <div className="text-sm font-bold text-white leading-none">
-                MED<span className="text-orange-400">AI</span>
+                GENIE
               </div>
-              <div className="text-[8px] tracking-wider text-gray-200 font-light mt-0.5">AGENT</div>
+              <div className="text-[8px] tracking-wider text-gray-200 font-light mt-0.5">ANALYTICS</div>
             </div>
           </Button>
         </div>
@@ -352,19 +353,16 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
           <div className="absolute -bottom-4 right-8 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[20px] border-t-white z-10"></div>
           
           <Card className="flex flex-col h-[600px] max-h-[calc(100vh-48px)] shadow-xl rounded-lg overflow-hidden">
-          {/* Header - MedAI Branded */}
+          {/* Header - Genie Branded */}
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b bg-gradient-to-r from-purple-600 to-indigo-700">
             <div className="flex-1">
               <CardTitle className="text-lg flex items-center gap-2 text-white">
-                <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center flex-shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.5-7.5l-2.8 2.8m-7.4 7.4l-2.8 2.8m14.2 0l-2.8-2.8m-7.4-7.4l-2.8-2.8" />
-                  </svg>
+                <div className="w-6 h-6 bg-purple-500 rounded flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-bold">MED<span className="text-orange-400">AI</span> Agent</span>
+                <span className="font-bold">Genie</span>
               </CardTitle>
-              <p className="text-sm text-purple-100 mt-1">Your healthcare sales & compliance assistant</p>
+              <p className="text-sm text-purple-100 mt-1">Your Analytics Agent</p>
             </div>
             <Button
               variant="ghost"
@@ -394,7 +392,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                         <AvatarFallback className="bg-gradient-to-br from-purple-600 to-indigo-700 text-white">
                           <div className="flex flex-col items-center justify-center scale-75">
                             <div className="text-[8px] font-bold leading-none">
-                              MED<span className="text-orange-400">AI</span>
+                              GENIE
                             </div>
                           </div>
                         </AvatarFallback>
@@ -575,7 +573,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({
                       <AvatarFallback className="bg-gradient-to-br from-purple-600 to-indigo-700 text-white">
                         <div className="flex flex-col items-center justify-center scale-75">
                           <div className="text-[8px] font-bold leading-none">
-                            MED<span className="text-orange-400">AI</span>
+                            GENIE
                           </div>
                         </div>
                       </AvatarFallback>

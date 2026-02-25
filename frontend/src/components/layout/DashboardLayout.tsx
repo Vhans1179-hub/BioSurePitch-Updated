@@ -23,7 +23,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: '/simulator', label: 'Contract Simulator', icon: Activity },
     { path: '/ghost-radar', label: 'Ghost Patient Radar', icon: AlertTriangle },
     { path: '/methodology', label: 'Methodology', icon: FileText },
-    { path: '/medai-agent', label: 'MedAI Agent', icon: Sparkles, external: true }
+    { path: '/research-agent', label: 'Genie - Analytics Agent', icon: Sparkles, external: true }
   ];
   
   return (

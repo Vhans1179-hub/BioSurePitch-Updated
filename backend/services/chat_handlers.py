@@ -1155,74 +1155,95 @@ class PDFKnowledgeHandler(QueryHandler):
 
 
 class GeneralChatHandler(QueryHandler):
-    """Handler for general chat queries (non-data queries)."""
+    """Handler for general chat queries using Gemini 2.0 Flash for natural conversation."""
     
     async def handle(self, params: Dict[str, Any]) -> str:
         """
-        Handle general chat queries using keyword matching.
+        Handle general chat queries using Gemini for natural language responses.
+        Automatically includes uploaded PDFs in the context for document-aware conversations.
         
         Args:
             params: Dictionary containing 'message' parameter
             
         Returns:
-            Contextual response string
+            Natural language response from Gemini
         """
-        message = params.get("message", "").lower()
+        message = params.get("message", "").strip()
         
-        # Check for keywords and return appropriate responses
-        if "help" in message:
-            return (
-                "I'm here to help! You can ask me about:\n\n"
-                "**Data Insights:**\n"
-                "- 'Show me top 5 HCOs with highest ghost patients'\n"
-                "- 'Show contract templates'\n"
-                "- 'What's the expected rebate for 12-month survival?'\n"
-                "- 'Patient statistics' or 'Show patient demographics'\n"
-                "- 'How many patients had toxicity events?'\n\n"
-                "**Dashboard Features:**\n"
-                "- Cohort analysis and metrics\n"
-                "- Contract simulation\n"
-                "- Ghost radar features"
+        if not message:
+            return "Hello! I'm Genie - your Analytics Agent. How can I help you today?"
+        
+        try:
+            # Import here to avoid circular dependency
+            from backend.services.gemini_rag_service import get_rag_service
+            
+            # Get RAG service
+            rag_service = await get_rag_service()
+            
+            # Build context-aware prompt
+            system_context = (
+                "You are Genie, an Analytics Agent - a helpful AI assistant for healthcare analytics and research. "
+                "You have access to:\n"
+                "- Healthcare organization (HCO) data\n"
+                "- Patient cohort information\n"
+                "- Contract templates and simulations\n"
+                "- Research papers and clinical guidelines\n\n"
+                "Respond naturally and conversationally. If the user asks about specific data queries like "
+                "'top 5 HCOs' or 'patient statistics', let them know they can ask those specific questions. "
+                "If documents are available, use them to provide accurate, evidence-based answers. "
+                "Be concise but informative."
             )
-        
-        if "dashboard" in message:
+            
+            # Combine system context with user message
+            full_query = f"{system_context}\n\nUser: {message}\n\nAssistant:"
+            
+            # Query with all available documents for context
+            result = await rag_service.query_documents(full_query)
+            
+            if result["success"] and result["response"]:
+                response_text = result["response"]
+                
+                # Add sources if documents were used
+                sources = result.get("sources", [])
+                if sources:
+                    response_text += "\n\n📚 **Sources:** " + ", ".join([s.get("name", "Unknown") for s in sources])
+                
+                return response_text
+            else:
+                # Fallback if RAG fails - use simple Gemini without documents
+                logger.warning("RAG query failed in GeneralChatHandler, using fallback")
+                return await self._fallback_response(message, rag_service)
+                
+        except Exception as e:
+            logger.error(f"Error in GeneralChatHandler: {str(e)}", exc_info=True)
             return (
-                "The dashboard provides comprehensive analytics including cohort analysis, "
-                "contract simulation, and ghost radar features. You can navigate between "
-                "different sections using the sidebar."
+                "I'm here to help! You can ask me about healthcare data, research papers, "
+                "patient statistics, or general questions. What would you like to know?"
             )
+    
+    async def _fallback_response(self, message: str, rag_service) -> str:
+        """
+        Fallback response using Gemini without document context.
         
-        if "cohort" in message:
-            return (
-                "The Cohort Overview shows key metrics like retention rates, engagement scores, "
-                "and user growth. You can filter by different time periods to analyze trends."
+        Args:
+            message: User message
+            rag_service: RAG service instance
+            
+        Returns:
+            Response from Gemini
+        """
+        try:
+            # Use Gemini model directly without documents
+            import google.generativeai as genai
+            
+            prompt = (
+                "You are Genie, an Analytics Agent - a helpful AI for healthcare analytics. "
+                f"Respond naturally to: {message}"
             )
-        
-        if "contract" in message and "simulate" not in message:
-            return (
-                "The Contract Simulator allows you to model different contract scenarios and "
-                "see projected outcomes. You can ask me 'show contract templates' or "
-                "'what's the expected rebate for 12-month survival?'"
-            )
-        
-        if "ghost" in message or "radar" in message:
-            return (
-                "Ghost Radar helps identify inactive or at-risk users. It uses advanced analytics "
-                "to detect patterns that might indicate user churn."
-            )
-        
-        if "hello" in message or "hi" in message:
-            return "Hello! How can I assist you today?"
-        
-        if "thank" in message:
-            return "You're welcome! Feel free to ask if you need anything else."
-        
-        # Default response
-        return (
-            "I understand. Is there anything specific you'd like to know? You can ask me:\n"
-            "- 'Show me top 5 HCOs with highest ghost patients'\n"
-            "- 'Show contract templates'\n"
-            "- 'What's the expected rebate for 12-month survival?'\n"
-            "- 'Patient statistics' or 'How many patients had toxicity?'\n"
-            "- Or ask about dashboard features"
-        )
+            
+            response = rag_service.model.generate_content(prompt)
+            return response.text if response.text else "I'm here to help! What would you like to know?"
+            
+        except Exception as e:
+            logger.error(f"Fallback response failed: {str(e)}")
+            return "Hello! I'm Genie - your Analytics Agent. How can I help you today?"

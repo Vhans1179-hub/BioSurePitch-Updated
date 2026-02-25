@@ -366,6 +366,53 @@ async def delete_pdf(file_name: str):
         )
 
 
+@router.delete("/gemini/{gemini_file_id:path}", response_model=PDFDeleteResponse)
+async def delete_gemini_file(gemini_file_id: str):
+    """
+    Delete a file from Gemini File API only (not local storage).
+    
+    This is useful for cleaning up Gemini files that don't have local copies.
+    
+    Args:
+        gemini_file_id: Gemini file ID (e.g., 'files/abc123')
+        
+    Returns:
+        PDFDeleteResponse with deletion status
+        
+    Raises:
+        HTTPException: 404 if file not found, 500 if deletion fails
+    """
+    try:
+        rag_service = await get_rag_service()
+        
+        # Delete from Gemini
+        deleted = await rag_service.delete_file(gemini_file_id)
+        
+        if not deleted:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"File '{gemini_file_id}' not found in Gemini"
+            )
+        
+        logger.info(f"Deleted Gemini file: {gemini_file_id}")
+        
+        return PDFDeleteResponse(
+            success=True,
+            message=f"File deleted from Gemini",
+            deleted_from_local=False,
+            deleted_from_gemini=True
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting Gemini file: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete Gemini file: {str(e)}"
+        )
+
+
 @router.post("/query", response_model=PDFQueryResponse)
 async def query_pdfs(request: PDFQueryRequest):
     """

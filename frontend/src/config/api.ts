@@ -51,6 +51,7 @@ export const API_ENDPOINTS = {
     geminiFiles: '/pdfs/gemini-files',
     sync: '/pdfs/sync',
     delete: (fileName: string) => `/pdfs/${fileName}`,
+    deleteGemini: (geminiFileId: string) => `/pdfs/gemini/${geminiFileId}`,
     query: '/pdfs/query',
   },
 } as const;

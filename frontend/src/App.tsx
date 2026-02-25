@@ -23,8 +23,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Standalone Pages - No Dashboard Layout */}
-          <Route path="/lexington" element={<LexingtonLanding />} />
-          <Route path="/medai-agent" element={<MedAIAgent />} />
+          <Route path="/sales-agent" element={<LexingtonLanding />} />
+          <Route path="/research-agent" element={<MedAIAgent />} />
           <Route path="/intelligence-hub" element={<IntelligenceHub />} />
           
           {/* Dashboard Routes - With Dashboard Layout */}

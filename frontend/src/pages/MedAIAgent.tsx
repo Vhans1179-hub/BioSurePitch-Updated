@@ -5,8 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { MessageCircle, X, Send, ChevronDown, ChevronUp, BookOpen, Info } from 'lucide-react';
+import { MessageCircle, X, Send, ChevronDown, ChevronUp, BookOpen, Info, Lightbulb, TrendingUp } from 'lucide-react';
 import { PDFManager } from '@/components/chat/PDFManager';
+import { getApiUrl, API_ENDPOINTS } from '@/config/api';
 
 interface ChatMessage {
   text: string;
@@ -18,7 +19,7 @@ const MedAIAgent = () => {
   const [isDocLibraryOpen, setIsDocLibraryOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      text: '👋 Hello! I\'m your MedAI Assistant. I can help you with:\n\n• Healthcare organization information\n• Patient data insights\n• Contract details\n• HCO address lookups\n• Document search (research papers, policies, guidelines)\n\nTry asking: "What are the top 5 HCOs?" or "What does the research say about CAR-T therapy?"',
+      text: '👋 Hello..!, I am Genie - your Analytics Agent. How can I help you?',
       sender: 'bot'
     }
   ]);
@@ -52,7 +53,7 @@ const MedAIAgent = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/chat', {
+      const response = await fetch(getApiUrl(API_ENDPOINTS.chat.message), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,15 +84,14 @@ const MedAIAgent = () => {
       <header className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-50">
         <nav className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <svg className="h-12 w-auto" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
-                <rect width="300" height="80" fill="#3d3d3d"/>
-                <text x="25" y="35" fontFamily="Arial, sans-serif" fontSize="28" fontWeight="bold" fill="white">LEXINGTON</text>
-                <rect x="65" y="18" width="15" height="3" fill="#e67e22"/>
-                <rect x="65" y="27" width="15" height="3" fill="#e67e22"/>
-                <rect x="65" y="36" width="15" height="3" fill="#e67e22"/>
-                <text x="95" y="60" fontFamily="Arial, sans-serif" fontSize="20" fontWeight="normal" fill="white" letterSpacing="8">MEDICAL</text>
-              </svg>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Genie</h1>
+                <p className="text-xs text-gray-600">Analytics Agent</p>
+              </div>
             </div>
             <ul className="hidden md:flex space-x-8">
               <li><a href="#home" className="text-gray-700 hover:text-purple-600 font-medium transition-colors">Home</a></li>
@@ -106,14 +106,14 @@ const MedAIAgent = () => {
       {/* Hero Section */}
       <section id="home" className="text-center py-24 text-white">
         <div className="container mx-auto px-6">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">Welcome to Lexington Medical</h1>
-          <p className="text-xl md:text-2xl mb-8 opacity-95">Excellence in Healthcare Solutions with AI-Powered Assistance</p>
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">Welcome to Genie</h1>
+          <p className="text-xl md:text-2xl mb-8 opacity-95">Your AI-Powered Analytics Agent for Healthcare Intelligence</p>
           <Button 
             onClick={() => setIsChatOpen(true)}
             size="lg"
             className="bg-white text-purple-600 hover:bg-gray-100 shadow-xl text-lg px-8 py-6 rounded-full"
           >
-            Chat with MedAI Assistant
+            Chat with Genie
           </Button>
         </div>
       </section>
@@ -171,7 +171,7 @@ const MedAIAgent = () => {
             <Card className="p-8 bg-gradient-to-br from-purple-600 to-purple-800 text-white hover:scale-105 transition-transform">
               <div className="text-5xl mb-4">🤖</div>
               <h3 className="text-2xl font-bold mb-4">AI-Powered Insights</h3>
-              <p className="opacity-95">Our MedAI Assistant provides instant access to healthcare data, patient insights, organizational information, and document search.</p>
+              <p className="opacity-95">Genie provides instant access to healthcare data, patient insights, organizational information, and document search.</p>
             </Card>
             <Card className="p-8 bg-gradient-to-br from-purple-600 to-purple-800 text-white hover:scale-105 transition-transform">
               <div className="text-5xl mb-4">💊</div>
@@ -187,13 +187,13 @@ const MedAIAgent = () => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6 text-gray-900">About Lexington Medical</h2>
-              <p className="text-lg text-gray-700 mb-4">Lexington Medical is committed to providing exceptional healthcare services with a focus on patient-centered care and innovative medical solutions.</p>
-              <p className="text-lg text-gray-700 mb-4">With years of experience in the healthcare industry, we have built a reputation for excellence, compassion, and cutting-edge medical technology.</p>
-              <p className="text-lg text-gray-700">Our mission is to improve the health and well-being of our community through accessible, high-quality healthcare services powered by AI technology.</p>
+              <h2 className="text-4xl font-bold mb-6 text-gray-900">About Genie</h2>
+              <p className="text-lg text-gray-700 mb-4">Genie is an AI-powered Analytics Agent designed to transform how healthcare organizations access and analyze critical data.</p>
+              <p className="text-lg text-gray-700 mb-4">With advanced natural language processing and intelligent document search capabilities, Genie provides instant insights from healthcare data, research papers, and organizational information.</p>
+              <p className="text-lg text-gray-700">Our mission is to empower healthcare professionals with fast, accurate, and actionable intelligence through conversational AI technology.</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-600 to-purple-800 h-96 rounded-2xl flex items-center justify-center text-white text-8xl">
-              🏥
+            <div className="bg-gradient-to-br from-purple-600 to-purple-800 h-96 rounded-2xl flex items-center justify-center text-white">
+              <Lightbulb className="w-48 h-48" strokeWidth={1.5} />
             </div>
           </div>
         </div>
@@ -232,9 +232,9 @@ const MedAIAgent = () => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h3 className="text-xl font-bold mb-4 text-purple-400">Lexington Medical</h3>
-              <p className="text-gray-300">Excellence in Healthcare Solutions</p>
-              <p className="text-gray-300">Powered by MedAI Technology</p>
+              <h3 className="text-xl font-bold mb-4 text-purple-400">Genie</h3>
+              <p className="text-gray-300">Your AI-Powered Analytics Agent</p>
+              <p className="text-gray-300">Healthcare Intelligence Made Simple</p>
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4 text-purple-400">Quick Links</h3>
@@ -249,11 +249,11 @@ const MedAIAgent = () => {
               <h3 className="text-xl font-bold mb-4 text-purple-400">Contact Info</h3>
               <p className="text-gray-300">📍 123 Medical Center Drive</p>
               <p className="text-gray-300">📞 (555) 123-4567</p>
-              <p className="text-gray-300">✉️ info@medaiagent.org</p>
+              <p className="text-gray-300">✉️ info@genieagent.org</p>
             </div>
           </div>
           <div className="border-t border-gray-700 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 Lexington Medical | MedAIAgent.org. All rights reserved.</p>
+            <p>&copy; 2026 Genie Analytics Agent | GenieAgent.org. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -273,7 +273,10 @@ const MedAIAgent = () => {
         {isChatOpen && (
           <Card className="w-[400px] h-[600px] flex flex-col shadow-2xl">
             <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-t-lg flex justify-between items-center">
-              <h3 className="text-lg font-bold">🤖 MedAI Assistant</h3>
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                Genie
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"

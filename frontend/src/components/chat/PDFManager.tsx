@@ -195,6 +195,39 @@ export const PDFManager: React.FC = () => {
     }
   };
 
+  const handleDeleteGeminiFile = async (geminiFileId: string, displayName: string) => {
+    if (!confirm(`Are you sure you want to delete "${displayName}" from Gemini?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        getApiUrl(API_ENDPOINTS.pdfs.deleteGemini(geminiFileId)),
+        { method: 'DELETE' }
+      );
+
+      if (!response.ok) {
+        throw new Error('Delete failed');
+      }
+
+      const data: PDFDeleteResponse = await response.json();
+      
+      toast({
+        title: 'Success',
+        description: data.message,
+      });
+
+      await loadGeminiFiles();
+    } catch (error) {
+      console.error('Error deleting Gemini file:', error);
+      toast({
+        title: 'Delete Failed',
+        description: 'Failed to delete file from Gemini',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const getGeminiStatus = (displayName: string): GeminiFileInfo | undefined => {
     return geminiFiles.find(f => f.display_name === displayName);
   };
@@ -399,9 +432,64 @@ export const PDFManager: React.FC = () => {
           )}
         </ScrollArea>
 
+        {/* Gemini Files Section */}
+        <div className="border rounded-lg p-4 space-y-3 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm">All Files in Gemini</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={loadGeminiFiles}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
+          <ScrollArea className="h-[200px]">
+            {geminiFiles.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-4 text-center">
+                <FileText className="h-8 w-8 mb-2 opacity-50" />
+                <p className="text-xs">No files in Gemini</p>
+              </div>
+            ) : (
+              <div className="space-y-2 pr-4">
+                {geminiFiles.map((file) => (
+                  <div
+                    key={file.name}
+                    className="flex items-center justify-between p-2 border rounded bg-background"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-3 w-3 flex-shrink-0 text-blue-500" />
+                        <span className="font-medium text-xs truncate">
+                          {file.display_name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-muted-foreground">
+                          {formatFileSize(file.size_bytes)}
+                        </span>
+                        {getStatusBadge(file)}
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteGeminiFile(file.name, file.display_name)}
+                      className="ml-2"
+                    >
+                      <Trash2 className="h-3 w-3 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+
         {/* Summary */}
         <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-          <span>{pdfs.length} document{pdfs.length !== 1 ? 's' : ''} total</span>
+          <span>{pdfs.length} local document{pdfs.length !== 1 ? 's' : ''}</span>
           <span>{geminiFiles.filter(f => f.state === 'ACTIVE').length} active in Gemini</span>
         </div>
       </CardContent>
