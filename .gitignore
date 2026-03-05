@@ -14,8 +14,6 @@ env/
 ENV/
 
 # Environment variables
-.env
-.env.local
 
 # IDEs
 .vscode/
@@ -61,3 +59,4 @@ search_*.py
 
 # Standalone HTML test files
 MedAIAgent.html
+config.bat
